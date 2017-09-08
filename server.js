@@ -1,26 +1,80 @@
 'use strict';
-const {Users} = require('./models');
 
 const express = require('express');
+const session = require('express-session');
+const MongodDBStore = require('connect-mongodb-session')(session);
 const passport = require('passport');
 const mongoose = require('mongoose');
-const app = express();
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
 const cors = require('cors');
-const {CLIENT_ORIGIN} = require('./config');
 
+const app = express();
+app.use(morgan('common'));
+app.use(bodyParser.json());
+
+const {DATABASE_URL, PORT} = require('./config');
+const {basicStrategy} = require('./auth/strategies');
+const {jwtStrategy} = require('./auth/strategies');
+const {authRouter} = require('./auth/router');
+const {usersRouter} = require('./users/router');
+
+//app.use(
+//    cors({
+//        origin: CLIENT_ORIGIN
+//    })
+//);
+
+app.use(passport.initialize());
+passport.use(basicStrategy);
+passport.use(jwtStrategy);
+
+
+app.use('/api/users/', usersRouter);
+app.use('/api/auth/', authRouter);
 mongoose.Promise = global.Promise;
-const PORT = process.env.PORT || 3000;
-
-app.use(
-    cors({
-        origin: CLIENT_ORIGIN
-    })
-);
 
 app.get('/api/*', (req, res) => {
  res.json({ok: true});
 });
 
-app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 
-module.exports = {app};
+let server;
+
+function runServer() {
+  return new Promise((resolve, reject) => {
+    mongoose.connect(DATABASE_URL, err => {
+      if (err) {
+        return reject(err);
+      }
+      server = app.listen(PORT, () => {
+        console.log(`Your app is listening on port ${PORT}`);
+        resolve();
+      })
+      .on('error', err => {
+        mongoose.disconnect();
+        reject(err);
+      });
+    });
+  });
+}
+
+function closeServer() {
+  return mongoose.disconnect().then(() => {
+    return new Promise((resolve, reject) => {
+      console.log('Closing server');
+      server.close(err => {
+        if (err) {
+          return reject(err);
+        }
+        resolve();
+      });
+    });
+  });
+}
+
+if (require.main === module) {
+  runServer().catch(err => console.error(err));
+};
+
+module.exports = {app, runServer, closeServer};

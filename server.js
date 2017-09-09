@@ -35,10 +35,6 @@ app.use('/api/users/', usersRouter);
 app.use('/api/auth/', authRouter);
 mongoose.Promise = global.Promise;
 
-app.get('/api/*', (req, res) => {
- res.json({ok: true});
-});
-
 //Using the jwt strategy to protect endpoints. Instead of passing in basic we pass in jwt in the authentication middleware. 
 app.get('/api/protected', 
   passport.authenticate('jwt', {session: false}),

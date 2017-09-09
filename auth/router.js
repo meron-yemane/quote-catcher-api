@@ -22,5 +22,13 @@ authRouter.post('/login',
   }
 );
 
+authRouter.post('/refresh', 
+  passport.authenticate('jwt', {session: false}),
+  (req, res) => {
+    const authToken = createAuthToken(req.user);
+    res.json({authToken});
+  }
+);
+
 
 module.exports = {authRouter};

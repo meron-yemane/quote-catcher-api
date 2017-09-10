@@ -36,7 +36,7 @@ const basicStrategy = new BasicStrategy((username, password, callback) => {
     });
 });
 
-//basicStrategy allowed the user to supply a username and password to authenticate with an endpoint; this second strategy will do the same thing for JWTs.
+//basicStrategy allowed the user to supply a username and password to authenticate with an endpoint; this second strategy will do the same thing for JWT's.
 
 const jwtStrategy = new JwtStrategy({
   secretOrKey: JWT_SECRET,

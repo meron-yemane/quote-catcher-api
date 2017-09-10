@@ -38,6 +38,17 @@ describe('Quote Catcher API resources', function() {
   });
 
   describe('POST endpoint', function() {
+    let authorizationToken;
+    beforeEach(function(done) {
+      chai.request(app)
+        .post('/api/auth/login')
+        .auth('Steve', 'password')
+        .end(function(err, res) {
+          authorizationToken = res.body.authToken;
+          done();
+        });
+    });
+
     it('should add a user', function() {
       const newUser= {
         username: "Marshawn",
@@ -68,17 +79,6 @@ describe('Quote Catcher API resources', function() {
         .then(function(res) {
           res.should.have.status(200);
           res.body.should.include.key('authToken');
-        });
-    });
-
-    let authorizationToken;
-    beforeEach(function(done) {
-      chai.request(app)
-        .post('/api/auth/login')
-        .auth('Steve', 'password')
-        .end(function(err, res) {
-          authorizationToken = res.body.authToken;
-          done();
         });
     });
 

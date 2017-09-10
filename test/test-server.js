@@ -61,13 +61,34 @@ describe('Quote Catcher API resources', function() {
         });
     });
 
-    it('should login existing user and respond with JWT', function() {
+    it('should login existing user and respond with authToken', function() {
       return chai.request(app)
         .post('/api/auth/login')
         .auth('Steve', 'password')
         .then(function(res) {
           res.should.have.status(200);
           res.body.should.include.key('authToken');
+        });
+    });
+  });
+
+  describe('GET endpoin', function() {
+    let authToken;
+    before(function(done) {
+      chai.request(app)
+        .post('/api/auth/login')
+        .auth('Steve', 'password')
+        .end(function(err, res) {
+          authToken = res.body.authToken;
+          done();
+        });
+    });
+    it('should allow user to access protected endpoint with JWT', function() {
+      chai.request(app)
+        .get('/api/protected')
+        .set('authorization', 'Bearer ' + authToken)
+        .then(function(res) {
+          res.should.have.status(200);
         });
     });
   });

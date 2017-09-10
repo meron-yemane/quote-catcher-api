@@ -19,9 +19,17 @@ describe('Quote Catcher API resources', function() {
   before(function() {
     return runServer(TEST_DATABASE_URL);
   });
-  //beforeEach(function() {
-  //  return 
-  //});
+  beforeEach(function() {
+    const user = {
+      username: "Steve",
+      firstName: "Steve",
+      lastName: "Mark",
+      password: "password"
+    }
+    return chai.request(app)
+      .post('/api/users')
+      .send(user)
+  });
   afterEach(function() {
     return tearDownDb();
   });
@@ -52,5 +60,27 @@ describe('Quote Catcher API resources', function() {
           res.body.lastName.should.equal(newUser.lastName);
         });
     });
+
+    it('should login existing user and respond with JWT', function() {
+      return chai.request(app)
+        .post('/api/auth/login')
+        .auth('Steve', 'password')
+        .then(function(res) {
+          res.should.have.status(200);
+          res.body.should.include.key('authToken');
+        });
+    });
   });
 });
+
+
+
+
+
+
+
+
+
+
+
+

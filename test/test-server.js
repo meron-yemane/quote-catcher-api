@@ -108,6 +108,11 @@ describe('Quote Catcher API resources', function() {
       req.send(quoteInfo)
       return req.then(function(res) {
         res.should.have.status(201);
+        res.should.be.json;
+        res.should.be.a('object');
+        res.body.quoteString.should.equal(quoteInfo.quoteString);
+        res.body.should.include.key('quoteString');
+        res.body._id.should.not.be.null;
       });
     });
   });
@@ -133,6 +138,9 @@ describe('Quote Catcher API resources', function() {
         });
     });
   });
+
+  describe('PUT endpoint', function() {
+
 });
 
 

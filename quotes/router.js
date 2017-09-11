@@ -14,7 +14,6 @@ quotesRouter.post('/create', passport.authenticate('jwt', {session: false}), (re
     const message = 'Missing quote in request body';
     return res.status(400).send(message);
   }
-  console.log(jwt.verify(req.headers.authorization.split(' ')[1], config.JWT_SECRET).sub);
   Quotes.create({quoteString: req.body.quoteString, author: req.body.author || 'Unknown', theme: req.body.theme || "None"}, (err, quote) => {
      if (err) {
        return res.status(400);
@@ -38,6 +37,20 @@ quotesRouter.post('/create', passport.authenticate('jwt', {session: false}), (re
           res.status(201).json(quote);
         })
       })
+  });
+});
+
+quotesRouter.put('/quotealter/:id', passport.authenticate('jwt', {session: false}), (req, res) => {
+  if(!(req.params.id === req.body._id)) {
+    const message = ('Request path id must match request body id');
+    res.status(400).json({message: 'Request path id must match request body id'});
+  };
+  Quotes
+  .findByIdAndUpdate({_id: req.params.id}, {$set: {quoteString: req.body.quoteString}}, (err, quote) => {
+    if (err) {
+      return res.status(500).json(err);
+    }
+    return res.status(200).json(quote);
   });
 });
 

@@ -10,6 +10,14 @@ const {TEST_DATABASE_URL} = require('../config');
 
 chai.use(chaiHttp);
 
+function generateQuoteData() {
+  return {
+    quoteString: "Example quote Example Quote",
+    author: "Benjamin Franklin",
+    theme: "Business"
+  }
+}
+
 function tearDownDb() {
   console.log('Deleting database');
   return mongoose.connection.dropDatabase();
@@ -91,6 +99,16 @@ describe('Quote Catcher API resources', function() {
           res.body.should.include.key('authToken');
           //res.body.authToken.should.not.equal(authorizationToken);
         });
+    });
+
+    it('should add a quote', function() {
+      const quoteInfo = generateQuoteData();
+      let req = chai.request(app).post('/api/quotes/create');
+      req.set('authorization', 'Bearer ' + authorizationToken)
+      req.send(quoteInfo)
+      return req.then(function(res) {
+        res.should.have.status(201);
+      });
     });
   });
 

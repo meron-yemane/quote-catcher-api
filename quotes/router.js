@@ -15,17 +15,16 @@ quotesRouter.post('/create', passport.authenticate('jwt', {session: false}), (re
     return res.status(400).send(message);
   }
   console.log(jwt.verify(req.headers.authorization.split(' ')[1], config.JWT_SECRET).sub);
-  Quotes.create({quoteString: req.body.quoteString}, (err, quote) => {
+  Quotes.create({quoteString: req.body.quoteString, author: req.body.author || 'Unknown', theme: req.body.theme || "None"}, (err, quote) => {
      if (err) {
        return res.status(400);
      }
      User
-      .findOne({username: jwt.verify(req.headers.authorization.split(' ')[1], config.JWT_SECRET).sub})
-      .exec(function (err, user) {
+      .findOne({username: jwt.verify(req.headers.authorization.split(' ')[1], config.JWT_SECRET).sub}) 
+      .exec((err, user) => {
         if (err) {
           res.status(400);
         };
-        console.log("user: " + user)
         user._quotes.push(quote);
         user.save(err => {
           if (err) {

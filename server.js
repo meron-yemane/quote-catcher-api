@@ -19,6 +19,7 @@ const {basicStrategy} = require('./auth/strategies');
 const {jwtStrategy} = require('./auth/strategies');
 const {authRouter} = require('./auth/router');
 const {usersRouter} = require('./users/router');
+const {quotesRouter} = require('./quotes/router');
 
 //app.use(
 //    cors({
@@ -33,6 +34,7 @@ passport.use(jwtStrategy);
 
 app.use('/api/users/', usersRouter);
 app.use('/api/auth/', authRouter);
+app.use('/api/quotes/', quotesRouter);
 mongoose.Promise = global.Promise;
 
 //Using the jwt strategy to protect endpoints. Instead of passing in basic we pass in jwt in the authentication middleware. 

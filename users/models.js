@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 mongoose.Promise = global.Promise;
 
@@ -14,7 +15,8 @@ const UserSchema = mongoose.Schema({
     required: true
   },
   firstName: {type: String, default: ""},
-  lastName: {type: String, default: ""}
+  lastName: {type: String, default: ""},
+  _quotes: [{type: Schema.ObjectId, ref: 'Quotes'}]
 });
 
 UserSchema.methods.apiRepr = function() {

@@ -46,7 +46,7 @@ quotesRouter.put('/quotealter/:id', passport.authenticate('jwt', {session: false
     res.status(400).json({message: 'Request path id must match request body id'});
   };
   Quotes
-  .findByIdAndUpdate({_id: req.params.id}, {$set: {quoteString: req.body.quoteString}}, (err, quote) => {
+  .findByIdAndUpdate({_id: req.params.id}, {$set: {quoteString: req.body.quoteString}}, {new: true}, (err, quote) => {
     if (err) {
       return res.status(500).json(err);
     }
@@ -54,6 +54,17 @@ quotesRouter.put('/quotealter/:id', passport.authenticate('jwt', {session: false
   });
 });
 
+quotesRouter.get('/all', passport.authenticate('jwt', {session: false}), (req, res) => {
+  User
+    .findOne({username: jwt.verify(req.headers.authorization.split(' ')[1], config.JWT_SECRET).sub})
+    .populate('_quotes')
+    .exec((err, user) => {
+      if (err) {
+        res.status(400);
+      }
+      return res.status(200).json(user._quotes);
+    });
+});
 
 
 

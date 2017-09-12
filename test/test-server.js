@@ -1,6 +1,7 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const mongoose = require('mongoose');
+const {Quotes} = require('../quotes/model');
 
 const {app, runServer, closeServer} = require('../server');
 
@@ -128,6 +129,7 @@ describe('Quote Catcher API resources', function() {
           done();
         });
     });
+
     it('should allow user to access protected endpoint with JWT', function() {
       chai.request(app)
         .get('/api/protected')
@@ -140,17 +142,47 @@ describe('Quote Catcher API resources', function() {
   });
 
   describe('PUT endpoint', function() {
+    let authorizationToken;
+    beforeEach(function(done) {
+      chai.request(app)
+        .post('/api/auth/login')
+        .auth('Steve', 'password')
+        .end(function(err, res) {
+          authorizationToken = res.body.authToken;
+          done();
+        });
+    });
 
+    beforeEach(function() {
+      const quoteInfo = generateQuoteData();
+      let req = chai.request(app).post('/api/quotes/create');
+      req.set('authorization', 'Bearer ' + authorizationToken)
+      req.send(quoteInfo)
+      return req;
+    });
+
+    it('should update quoteString field', function() {
+      const updateQuoteData = {
+        quoteString: 'Example quote has been altered successfully'
+      };
+      req = chai.request(app).get('/api/quotes/all');
+      req.set('authorization', 'Bearer ' + authorizationToken)
+      return req.then(function(quotes) {
+        updateQuoteData._id = quotes.body[0]._id;
+        alterReq = chai.request(app).put(`/api/quotes/quotealter/${updateQuoteData._id}`);
+        alterReq.set('authorization', 'Bearer ' + authorizationToken);
+        alterReq.send(updateQuoteData);
+        return alterReq
+        })
+        .then(function(res) {
+          res.should.have.status(200);
+          res.body.quoteString.should.equal(updateQuoteData.quoteString);
+          res.should.be.json;
+          res.should.be.a('object');
+          res.body.should.include.key('quoteString');
+          res.body._id.should.not.be.null;
+        });
+    });
+  });
 });
-
-
-
-
-
-
-
-
-
-
-
 

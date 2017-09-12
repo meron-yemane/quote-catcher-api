@@ -183,6 +183,29 @@ describe('Quote Catcher API resources', function() {
           res.body._id.should.not.be.null;
         });
     });
+
+    it('should update author field', function() {
+      const updateQuoteData = {
+        author: 'Albert Camus'
+      };
+      req = chai.request(app).get('/api/quotes/all');
+      req.set('authorization', 'Bearer ' + authorizationToken)
+      return req.then(function(quotes) {
+        updateQuoteData._id = quotes.body[0]._id;
+        alterReq = chai.request(app).put(`/api/quotes/authoralter/${updateQuoteData._id}`);
+        alterReq.set('authorization', 'Bearer ' + authorizationToken);
+        alterReq.send(updateQuoteData);
+        return alterReq
+        })
+        .then(function(res) {
+          res.should.have.status(200);
+          res.body.author.should.equal(updateQuoteData.author);
+          res.should.be.json;
+          res.should.be.a('object');
+          res.body.should.include.keys('author', 'quoteString', 'theme');
+          res.body._id.should.not.be.null;
+        });
+    });
   });
 });
 

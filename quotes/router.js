@@ -14,7 +14,7 @@ quotesRouter.post('/create', passport.authenticate('jwt', {session: false}), (re
     const message = 'Missing quote in request body';
     return res.status(400).send(message);
   }
-  Quotes.create({quoteString: req.body.quoteString, author: req.body.author || 'Unknown', theme: req.body.theme || "None"}, (err, quote) => {
+  Quotes.create({quoteString: req.body.quoteString, author: req.body.author || 'Unknown', theme: req.body.theme || ["None"]}, (err, quote) => {
      if (err) {
        return res.status(400);
      }
@@ -38,6 +38,34 @@ quotesRouter.post('/create', passport.authenticate('jwt', {session: false}), (re
         })
       })
   });
+});
+
+quotesRouter.post('/addtheme/:id', passport.authenticate('jwt', {session: false}), (req, res) => {
+  if (!('theme' in req.body)) {
+    const message = 'Missing theme in request body';
+    return res.status(400).send(message);
+  };
+  if(!(req.params.id === req.body._id)) {
+    const message = ('Request path id must match request body id');
+    res.status(400).json({message: 'Request path id must match request body id'});
+  };
+  Quotes 
+    .findById(req.params.id, (err, quote) => {
+      if (err) {
+        res.status(400);
+      };
+      if (quote.theme.includes(req.body.theme)) {
+        const message = ('The theme you want to add alreadt exists for this quote');
+        res.json(message);
+      };
+      quote.theme.push(req.body.theme)
+      quote.save(err => {
+        if (err) {
+          return res.status(400);
+        }
+        res.status(201).json(quote);
+      });
+    });
 });
 
 quotesRouter.put('/quotealter/:id', passport.authenticate('jwt', {session: false}), (req, res) => {

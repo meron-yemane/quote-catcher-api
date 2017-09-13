@@ -58,6 +58,14 @@ describe('Quote Catcher API resources', function() {
         });
     });
 
+    beforeEach(function() {
+      const quoteInfo = generateQuoteData();
+      let req = chai.request(app).post('/api/quotes/create');
+      req.set('authorization', 'Bearer ' + authorizationToken)
+      req.send(quoteInfo)
+      return req;
+    });
+
     it('should add a user', function() {
       const newUser= {
         username: "Marshawn",
@@ -114,6 +122,46 @@ describe('Quote Catcher API resources', function() {
         res.body.quoteString.should.equal(quoteInfo.quoteString);
         res.body.should.include.key('quoteString');
         res.body._id.should.not.be.null;
+      });
+    });
+
+    it('should add a theme to the theme field', function() {
+      const updateQuoteData = {
+        theme: 'Career'
+      };
+      req = chai.request(app).get('/api/quotes/all');
+      req.set('authorization', 'Bearer ' + authorizationToken);
+      return req.then(function(quotes) {
+        updateQuoteData._id = quotes.body[0]._id;
+        alterReq = chai.request(app).post(`/api/quotes/addtheme/${updateQuoteData._id}`);
+        alterReq.set('authorization', 'Bearer ' + authorizationToken);
+        alterReq.send(updateQuoteData);
+        return alterReq
+      })
+      .then(function(res) {
+        res.should.have.status(201);
+        res.should.be.json;
+        res.should.be.an('object');
+        res.body.theme.should.include(updateQuoteData.theme);
+      });
+    }); 
+
+    it('should not add duplicate themes to theme field', function() {
+      const updateQuoteData = {
+        theme: 'Business'
+      };
+      req = chai.request(app).get('/api/quotes/all');
+      req.set('authorization', 'Bearer ' + authorizationToken)
+      return req.then(function(quotes) {
+        updateQuoteData._id = quotes.body[0]._id;
+        alterReq = chai.request(app).post(`/api/quotes/addtheme/${updateQuoteData._id}`);
+        alterReq.set('authorization', 'Bearer ' + authorizationToken);
+        alterReq.send(updateQuoteData);
+        return alterReq
+      })
+      .then(function(res) {
+        res.body.should.equal("The theme you want to add alreadt exists for this quote");
+        res.should.have.status(200);
       });
     });
   });

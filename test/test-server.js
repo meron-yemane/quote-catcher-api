@@ -189,6 +189,47 @@ describe('Quote Catcher API resources', function() {
     });
   });
 
+  describe('DELETE endpoint', function() {
+    let authorizationToken;
+    beforeEach(function(done) {
+      chai.request(app)
+        .post('/api/auth/login')
+        .auth('Steve', 'password')
+        .end(function(err, res) {
+          authorizationToken = res.body.authToken;
+          done();
+        });
+    });
+
+    beforeEach(function() {
+      const quoteInfo = generateQuoteData();
+      let req = chai.request(app).post('/api/quotes/create');
+      req.set('authorization', 'Bearer ' + authorizationToken)
+      req.send(quoteInfo)
+      return req;
+    });
+
+    it('should delete quote', function() {
+      let quote;
+      return Quotes
+        .findOne()
+        .exec()
+        .then(function(_quote) {
+          quote = _quote;
+          req = chai.request(app).delete(`/api/quotes/deletequote/${quote._id}`);
+          req.set('authorization', 'Bearer ' + authorizationToken);
+          return req
+        })
+        .then(function(res) {
+          res.should.have.status(204);
+          return Quotes.findById(quote._id).exec();
+        })
+        .then(function(_quote) {
+          should.not.exist(_quote);
+        });
+    }); 
+  });
+
   describe('PUT endpoint', function() {
     let authorizationToken;
     beforeEach(function(done) {

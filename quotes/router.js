@@ -55,7 +55,7 @@ quotesRouter.post('/addtheme/:id', passport.authenticate('jwt', {session: false}
         res.status(400);
       };
       if (quote.theme.includes(req.body.theme)) {
-        const message = ('The theme you want to add alreadt exists for this quote');
+        const message = ('The theme you want to add already exists for this quote');
         res.json(message);
       };
       quote.theme.push(req.body.theme)

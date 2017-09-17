@@ -14,18 +14,18 @@ const app = express();
 app.use(morgan('common'));
 app.use(bodyParser.json());
 
-const {DATABASE_URL, PORT} = require('./config');
+const {CLIENT_ORIGIN, DATABASE_URL, PORT} = require('./config');
 const {basicStrategy} = require('./auth/strategies');
 const {jwtStrategy} = require('./auth/strategies');
 const {authRouter} = require('./auth/router');
 const {usersRouter} = require('./users/router');
 const {quotesRouter} = require('./quotes/router');
 
-//app.use(
-//    cors({
-//        origin: CLIENT_ORIGIN
-//    })
-//);
+app.use(
+   cors({
+       origin: CLIENT_ORIGIN
+   })
+);
 
 app.use(passport.initialize());
 passport.use(basicStrategy);

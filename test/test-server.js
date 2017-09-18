@@ -160,7 +160,7 @@ describe('Quote Catcher API resources', function() {
         return alterReq
       })
       .then(function(res) {
-        res.body.should.equal("The theme you want to add alreadt exists for this quote");
+        res.body.should.equal("The theme you want to add already exists for this quote");
         res.should.have.status(200);
       });
     });
@@ -228,6 +228,29 @@ describe('Quote Catcher API resources', function() {
           should.not.exist(_quote);
         });
     }); 
+
+    it('should delete a theme from a quote', function() {
+      const deleteThemeData = {
+        theme: "Business"
+      };
+      return Quotes
+        .findOne()
+        .exec()
+        .then(function(quote) {
+          deleteThemeData._id = quote._id;
+          req = chai.request(app).delete(`/api/quotes/deletetheme/${quote._id}`);
+          req.set('authorization', 'Bearer ' + authorizationToken);
+          req.set('Content-Type', "application/json");
+          req.send(deleteThemeData);
+          return req
+        })
+        .then(function(res) {
+          res.should.have.status(200);
+          res.should.be.json;
+          res.should.be.an('object');
+          res.body.theme.should.not.include(deleteThemeData.theme);
+        });
+    });
   });
 
   describe('PUT endpoint', function() {

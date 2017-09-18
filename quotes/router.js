@@ -52,18 +52,18 @@ quotesRouter.post('/addtheme/:id', passport.authenticate('jwt', {session: false}
   Quotes 
     .findById(req.params.id, (err, quote) => {
       if (err) {
-        res.status(400);
+        return res.status(400);
       };
       if (quote.theme.includes(req.body.theme)) {
         const message = ('The theme you want to add already exists for this quote');
-        res.json(message);
+        return res.json(message);
       };
       quote.theme.push(req.body.theme)
       quote.save(err => {
         if (err) {
           return res.status(400);
         }
-        res.status(201).json(quote);
+        return res.status(201).json(quote);
       });
     });
 });
@@ -102,7 +102,7 @@ quotesRouter.get('/all', passport.authenticate('jwt', {session: false}), (req, r
     .populate('_quotes')
     .exec((err, user) => {
       if (err) {
-        res.status(400);
+        return res.status(400);
       }
       return res.status(200).json(user._quotes);
     });
@@ -112,8 +112,36 @@ quotesRouter.delete('/deletequote/:id', passport.authenticate('jwt', {session: f
   Quotes 
     .findByIdAndRemove(req.params.id)
     .exec()
-    .then(priority => res.status(204).end())
+    .then(quote => res.status(204).end())
     .catch(err => res.status(500).json({message: 'Internal server error'}));
+});
+
+quotesRouter.delete('/deletetheme/:id', passport.authenticate('jwt', {session: false}), (req, res) => {
+  if (!('theme' in req.body)) {
+    const message = 'Missing theme in request body';
+    return res.status(400).send(message);
+  };
+  Quotes
+    .findById(req.params.id, (err, quote) => {
+      if (err) {
+        return res.status(400);
+      }
+      if (!(quote.theme.includes(req.body.theme))) {
+        const message = "The theme you are attempting to delete could not be found for this quote."
+        return res.status(404).json(message);
+      }
+      let index = quote.theme.indexOf(req.body.theme);
+      if (index !== -1) {
+        quote.theme.splice(index, 1);
+      }
+      quote.save(err => {
+        if (err) {
+          return res.status(500).json({message: 'Internal server error'});
+        }
+        console.log(quote);
+        return res.status(200).json(quote);
+    });
+  });
 });
 
 

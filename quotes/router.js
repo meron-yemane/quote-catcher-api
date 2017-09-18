@@ -144,7 +144,4 @@ quotesRouter.delete('/deletetheme/:id', passport.authenticate('jwt', {session: f
   });
 });
 
-
-
-
 module.exports = {quotesRouter};

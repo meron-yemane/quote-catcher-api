@@ -58,14 +58,19 @@ quotesRouter.post('/addtheme/:id', passport.authenticate('jwt', {session: false}
         const message = ('The theme you want to add already exists for this quote');
         return res.json(message);
       };
-      quote.theme.push(req.body.theme)
+      for (themeCount = 0; themeCount < themeList.length; themeCount++) {
+        quote.theme.push(req.body.theme[themeCount])
+      }
       quote.save(err => {
         if (err) {
           return res.status(400);
         }
-        return res.status(201).json(quote);
+        res.status(201).json(quote);
       });
     });
+  User
+    .findOne({username: jwt.verify(req.headers.authorization.split(' ')[1], config.JWT_SECRET).sub})
+
 });
 
 quotesRouter.put('/quotealter/:id', passport.authenticate('jwt', {session: false}), (req, res) => {

@@ -16,7 +16,8 @@ const UserSchema = mongoose.Schema({
   },
   firstName: {type: String, default: ""},
   lastName: {type: String, default: ""},
-  _quotes: [{type: Schema.ObjectId, ref: 'Quotes'}]
+  _quotes: [{type: Schema.ObjectId, ref: 'Quotes'}],
+  themes: {type: Array, default: []}
 });
 
 UserSchema.methods.apiRepr = function() {

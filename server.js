@@ -14,7 +14,7 @@ const app = express();
 app.use(morgan('common'));
 app.use(bodyParser.json());
 
-const {CLIENT_ORIGIN, DATABASE_URL, PORT} = require('./config');
+const {CLIENT_ORIGIN, DATABASE_URL, PORT, JWT_SECRET, JWT_EXPIRY} = require('./config');
 const {basicStrategy} = require('./auth/strategies');
 const {jwtStrategy} = require('./auth/strategies');
 const {authRouter} = require('./auth/router');

@@ -18,10 +18,14 @@ authRouter.post('/login',
   passport.authenticate('basic', {session: false}),
   (req, res) => {
     const authToken = createAuthToken(req.user.apiRepr());
-    console.log("authtoken: " + authToken)
     res.json({authToken});
   }
 );
+
+authRouter.get('/logout', function(req, res){
+  localStorage.removeItem('access_token');
+  res.json({});
+});
 
 authRouter.post('/refresh', 
   passport.authenticate('jwt', {session: false}),

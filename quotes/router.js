@@ -58,9 +58,8 @@ quotesRouter.post('/addtheme/:id', passport.authenticate('jwt', {session: false}
         const message = ('The theme you want to add already exists for this quote');
         return res.json(message);
       };
-      for (themeCount = 0; themeCount < themeList.length; themeCount++) {
-        quote.theme.push(req.body.theme[themeCount])
-      }
+      console.log(req.body.theme)
+      quote.theme.push(req.body.theme)
       quote.save(err => {
         if (err) {
           return res.status(400);

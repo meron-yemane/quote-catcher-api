@@ -15,7 +15,7 @@ function generateQuoteData() {
   return {
     quoteString: "Example quote Example Quote",
     author: "Benjamin Franklin",
-    theme: "Business"
+    theme: ["Business"]
   }
 }
 
@@ -162,6 +162,19 @@ describe('Quote Catcher API resources', function() {
       .then(function(res) {
         res.body.should.equal("The theme you want to add already exists for this quote");
         res.should.have.status(200);
+      });
+    });
+
+    it('should return a filtered array of quotes by author', function() {
+      const searchAuthorData = {
+        author: 'Benjamin Franklin'
+      }
+      req = chai.request(app).post('/api/quotes/searchbyauthor');
+      req.set('authorization', 'Bearer ' + authorizationToken);
+      req.send(searchAuthorData);
+      return req.then(function(res) {
+        res.should.have.status(200);
+        res.should.be.an('object');
       });
     });
   });

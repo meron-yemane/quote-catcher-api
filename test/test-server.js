@@ -190,6 +190,19 @@ describe('Quote Catcher API resources', function() {
         res.should.be.an('object');
       });
     });
+
+    it('should return a filtered array of quotes sorted by quote string', function() {
+      const searchQuotesStringData = {
+        quoteString: 'Example qu'
+      }
+      req = chai.request(app).post('/api/quotes/searchbyquotestring');
+      req.set('authorization', 'Bearer ' + authorizationToken);
+      req.send(searchQuotesStringData);
+      return req.then(function(res) {
+        res.should.have.status(200);
+        res.should.be.an('object');
+      });
+    });
   });
 
   describe('GET endpoint', function() {

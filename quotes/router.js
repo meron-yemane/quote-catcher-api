@@ -140,7 +140,22 @@ quotesRouter.post('/searchbytheme', passport.authenticate('jwt', {session:false}
       }
       return res.status(200).send(quotesToReturn)
     });
-})
+});
+
+quotesRouter.post('/searchbyquotestring', passport.authenticate('jwt', {session: false}), (req, res) => {
+  quotesToReturn = [];
+  User 
+    .findOne({username: jwt.verify(req.headers.authorization.split(' ')[1], config.JWT_SECRET).sub})
+    .populate('_quotes')
+    .then(user => {
+      for (i=0; i<user._quotes.length; i++) {
+        if (user._quotes[i].quoteString.includes(req.body.quoteString)) {
+          quotesToReturn.push(user._quotes[i])
+        }
+      }
+      return res.status(200).send(quotesToReturn)
+    });
+});
 
 quotesRouter.delete('/deletequote/:id', passport.authenticate('jwt', {session: false}), (req, res) => {
   Quotes 

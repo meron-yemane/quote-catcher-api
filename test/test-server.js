@@ -165,13 +165,26 @@ describe('Quote Catcher API resources', function() {
       });
     });
 
-    it('should return a filtered array of quotes by author', function() {
+    it('should return a filtered array of quotes sorted by author', function() {
       const searchAuthorData = {
         author: 'Benjamin Franklin'
       }
       req = chai.request(app).post('/api/quotes/searchbyauthor');
       req.set('authorization', 'Bearer ' + authorizationToken);
       req.send(searchAuthorData);
+      return req.then(function(res) {
+        res.should.have.status(200);
+        res.should.be.an('object');
+      });
+    });
+
+    it('should return a filtered array of quotes sorted by theme', function() {
+      const searchThemeData = {
+        theme: 'Business'
+      }
+      req = chai.request(app).post('/api/quotes/searchbytheme');
+      req.set('authorization', 'Bearer ' + authorizationToken);
+      req.send(searchThemeData);
       return req.then(function(res) {
         res.should.have.status(200);
         res.should.be.an('object');

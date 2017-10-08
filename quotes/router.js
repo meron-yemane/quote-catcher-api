@@ -13,8 +13,11 @@ quotesRouter.post('/create', passport.authenticate('jwt', {session: false}), (re
   if (!('quoteString' in req.body)) {
     const message = 'Missing quote in request body';
     return res.status(400).send(message);
+  };
+  if (req.body.author !== undefined) {
+    req.body.author = req.body.author.trim();
   }
-  Quotes.create({quoteString: req.body.quoteString, author: req.body.author || 'Unknown', theme: req.body.theme || ["None"]}, (err, quote) => {
+  Quotes.create({quoteString: req.body.quoteString.trim(), author: req.body.author || 'Unknown', theme: req.body.theme || ["None"]}, (err, quote) => {
      if (err) {
        return res.status(400);
      }

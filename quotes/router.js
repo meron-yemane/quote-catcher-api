@@ -16,6 +16,7 @@ quotesRouter.post('/create', passport.authenticate('jwt', {session: false}), (re
   };
   if (req.body.author !== undefined) {
     req.body.author = req.body.author.trim();
+
   }
   Quotes.create({quoteString: req.body.quoteString.trim(), author: req.body.author || 'Unknown', theme: req.body.theme || ["None"]}, (err, quote) => {
      if (err) {
@@ -120,7 +121,7 @@ quotesRouter.post('/searchbyauthor', passport.authenticate('jwt', {session: fals
     .findOne({username: jwt.verify(req.headers.authorization.split(' ')[1], config.JWT_SECRET).sub})
     .populate({
       path: '_quotes',
-      match: {author: req.body.author}
+      match: {author: req.body.author.trim()}
     })
     .exec((err, user) => {
       if (err) {
@@ -150,7 +151,7 @@ quotesRouter.post('/searchbyquotestring', passport.authenticate('jwt', {session:
     .findOne({username: jwt.verify(req.headers.authorization.split(' ')[1], config.JWT_SECRET).sub})
     .populate({
       path: '_quotes',
-      match: {$text: {$search: "\"" + req.body.quoteString + "\""}}
+      match: {$text: {$search: "\"" + req.body.quoteString.trim() + "\""}}
     })
     .exec((err, user) => {
       console.log(user)

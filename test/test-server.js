@@ -193,7 +193,7 @@ describe('Quote Catcher API resources', function() {
 
     it('should return a filtered array of quotes sorted by quote string', function() {
       const searchQuotesStringData = {
-        quoteString: 'Example qu'
+        quoteString: "Example quote"
       }
       req = chai.request(app).post('/api/quotes/searchbyquotestring');
       req.set('authorization', 'Bearer ' + authorizationToken);

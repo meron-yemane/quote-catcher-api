@@ -106,54 +106,55 @@ quotesRouter.get('/all', passport.authenticate('jwt', {session: false}), (req, r
     .populate('_quotes')
     .exec((err, user) => {
       if (err) {
-        return res.status(400);
+        return res.status(500).json(err);
       }
       return res.status(200).json(user._quotes);
     });
 });
 
 quotesRouter.post('/searchbyauthor', passport.authenticate('jwt', {session: false}), (req, res) => {
-  quotesToReturn = [];
   User
     .findOne({username: jwt.verify(req.headers.authorization.split(' ')[1], config.JWT_SECRET).sub})
-    .populate('_quotes')
-    .then(user => {
-      for (i=0; i<user._quotes.length; i++) {
-        if (user._quotes[i].author === req.body.author) {
-          quotesToReturn.push(user._quotes[i])
-        }
+    .populate({
+      path: '_quotes',
+      match: {author: req.body.author}
+    })
+    .exec((err, user) => {
+      if (err) {
+        return res.status(500).json(err);
       }
-    return res.status(200).send(quotesToReturn)
-    }); 
+      return res.status(200).json(user._quotes);
+    });
 });
 
 quotesRouter.post('/searchbytheme', passport.authenticate('jwt', {session:false}), (req, res) => {
-  quotesToReturn = [];
   User
     .findOne({username: jwt.verify(req.headers.authorization.split(' ')[1], config.JWT_SECRET).sub})
-    .populate('_quotes')
-    .then(user => {
-      for (i=0; i<user._quotes.length; i++) {
-        if (user._quotes[i].theme.includes(req.body.theme)) {
-          quotesToReturn.push(user._quotes[i])
-        }
+    .populate({
+      path: '_quotes',
+      match: {theme: {$in: [req.body.theme]}}
+    })
+    .exec((err, user) => {
+      if (err) {
+        return res.status(500).json(err);
       }
-      return res.status(200).send(quotesToReturn)
+      return res.status(200).json(user._quotes);
     });
 });
 
 quotesRouter.post('/searchbyquotestring', passport.authenticate('jwt', {session: false}), (req, res) => {
-  quotesToReturn = [];
   User 
     .findOne({username: jwt.verify(req.headers.authorization.split(' ')[1], config.JWT_SECRET).sub})
-    .populate('_quotes')
-    .then(user => {
-      for (i=0; i<user._quotes.length; i++) {
-        if (user._quotes[i].quoteString.includes(req.body.quoteString)) {
-          quotesToReturn.push(user._quotes[i])
-        }
+    .populate({
+      path: '_quotes',
+      match: {$text: {$search: "\"" + req.body.quoteString + "\""}}
+    })
+    .exec((err, user) => {
+      console.log(user)
+      if (err) {
+        return res.status(500).json(err);
       }
-      return res.status(200).send(quotesToReturn)
+      return res.status(200).json(user._quotes);
     });
 });
 

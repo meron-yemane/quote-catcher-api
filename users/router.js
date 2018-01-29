@@ -124,6 +124,15 @@ usersRouter.post('/', jsonParser, (req, res) => {
     });
 });
 
+usersRouter.get('/protected',
+    passport.authenticate('jwt', {session: false}),
+    (req, res) => {
+        return res.json({
+            data: 'rosebud'
+        });
+    }
+);
+
 usersRouter.get('/', (req, res) => {
   return User
     .find()

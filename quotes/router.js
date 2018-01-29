@@ -16,7 +16,6 @@ quotesRouter.post('/create', passport.authenticate('jwt', {session: false}), (re
   };
   if (req.body.author !== undefined) {
     req.body.author = req.body.author.trim();
-
   }
   Quotes.create({quoteString: req.body.quoteString.trim(), author: req.body.author || 'Unknown', theme: req.body.theme || ["None"]}, (err, quote) => {
      if (err) {
@@ -62,8 +61,11 @@ quotesRouter.post('/addtheme/:id', passport.authenticate('jwt', {session: false}
         const message = ('The theme you want to add already exists for this quote');
         return res.json(message);
       };
-      console.log(req.body.theme)
-      quote.theme.push(req.body.theme)
+      if (quote.theme.includes("None")) {
+        quote.theme = req.body.theme
+      } else {
+        quote.theme = quote.theme.concat(req.body.theme);
+      }
       quote.save(err => {
         if (err) {
           return res.status(400);
@@ -117,11 +119,14 @@ quotesRouter.get('/all', passport.authenticate('jwt', {session: false}), (req, r
 });
 
 quotesRouter.post('/searchbyauthor', passport.authenticate('jwt', {session: false}), (req, res) => {
+  if (req.body.author !== undefined) {
+    req.body.author = req.body.author.trim();
+  }
   User
     .findOne({username: jwt.verify(req.headers.authorization.split(' ')[1], config.JWT_SECRET).sub})
     .populate({
       path: '_quotes',
-      match: {author: req.body.author.trim()}
+      match: {author: req.body.author}
     })
     .exec((err, user) => {
       if (err) {

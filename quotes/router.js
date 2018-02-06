@@ -16,6 +16,7 @@ quotesRouter.post('/create', passport.authenticate('jwt', {session: false}), (re
   };
   if (req.body.author !== undefined) {
     req.body.author = req.body.author.trim();
+    // .replace(/\b\w/g, l => l.toUpperCase());
   }
   Quotes.create({quoteString: req.body.quoteString.trim(), author: req.body.author || 'Unknown', theme: req.body.theme || ["None"]}, (err, quote) => {
      if (err) {
@@ -121,14 +122,17 @@ quotesRouter.get('/all', passport.authenticate('jwt', {session: false}), (req, r
 quotesRouter.post('/searchbyauthor', passport.authenticate('jwt', {session: false}), (req, res) => {
   if (req.body.author !== undefined) {
     req.body.author = req.body.author.trim();
+    console.log(req.body.author)
+    // .replace(/\b\w/g, l => l.toUpperCase());
   }
   User
     .findOne({username: jwt.verify(req.headers.authorization.split(' ')[1], config.JWT_SECRET).sub})
     .populate({
       path: '_quotes',
-      match: {author: req.body.author}
+      match: {author: { $regex: req.body.author, $options: 'i' }}
     })
     .exec((err, user) => {
+      console.log(user)
       if (err) {
         return res.status(500).json(err);
       }

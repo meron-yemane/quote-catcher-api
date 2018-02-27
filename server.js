@@ -23,8 +23,7 @@ const {quotesRouter} = require('./quotes/router');
 
 app.use(
    cors({
-      origin: CLIENT_ORIGIN
-       // origin: [CLIENT_ORIGIN, 'http://localhost:3000']
+       origin: [CLIENT_ORIGIN, 'http://localhost:3000']
    })
 );
 

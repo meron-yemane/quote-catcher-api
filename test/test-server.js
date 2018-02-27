@@ -25,6 +25,7 @@ function tearDownDb() {
 }
 
 describe('Quote Catcher API resources', function() {
+  this.timeout(0)
   before(function() {
     return runServer(TEST_DATABASE_URL);
   });
@@ -47,6 +48,7 @@ describe('Quote Catcher API resources', function() {
   });
 
   describe('POST endpoint', function() {
+    this.timeout(0)
     let authorizationToken;
     beforeEach(function(done) {
       chai.request(app)
@@ -193,6 +195,7 @@ describe('Quote Catcher API resources', function() {
   });
 
   describe('GET endpoint', function() {
+    this.timeout(0)
     let authorizationToken;
     before(function(done) {
       chai.request(app)
@@ -216,6 +219,7 @@ describe('Quote Catcher API resources', function() {
   });
 
   describe('DELETE endpoint', function() {
+    this.timeout(0)
     let authorizationToken;
     beforeEach(function(done) {
       chai.request(app)
@@ -280,6 +284,7 @@ describe('Quote Catcher API resources', function() {
   });
 
   describe('PUT endpoint', function() {
+    this.timeout(0)
     let authorizationToken;
     beforeEach(function(done) {
       chai.request(app)

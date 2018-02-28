@@ -64,6 +64,10 @@ function runServer() {
         mongoose.disconnect();
         reject(err);
       });
+    })    
+    .catch(err => { // mongoose connection error will be handled here
+      console.error('App starting error:', err.stack);
+      process.exit(1);
     });
   });
 }
@@ -79,7 +83,11 @@ function closeServer() {
         resolve();
       });
     });
-  });
+  })    
+  .catch(err => { // mongoose connection error will be handled here
+    console.error('App starting error:', err.stack);
+    process.exit(1);
+    });
 }
 
 if (require.main === module) {

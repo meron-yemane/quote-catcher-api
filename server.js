@@ -26,6 +26,8 @@ app.use(
        origin: [CLIENT_ORIGIN, 'http://localhost:3000', 'http://localhost:8080']
    })
 );
+// Bottom code allows pre-flight across the board for complex non GET/POST requests
+app.options('*', cors())
 
 app.use(passport.initialize());
 passport.use(basicStrategy);

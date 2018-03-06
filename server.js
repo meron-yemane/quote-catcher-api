@@ -67,7 +67,7 @@ function runServer() {
         reject(err);
       });
     })    
-    .catch(err => { // mongoose connection error will be handled here
+    .catch(err => {
       console.error('App starting error:', err.stack);
       process.exit(1);
     });
@@ -86,7 +86,7 @@ function closeServer() {
       });
     });
   })    
-  .catch(err => { // mongoose connection error will be handled here
+  .catch(err => {
     console.error('App starting error:', err.stack);
     process.exit(1);
     });

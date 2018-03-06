@@ -8,8 +8,6 @@ const QuoteSchema = new mongoose.Schema({
   theme: {type: Array, required: false}
 });
 
-// QuoteSchema.mongoose.createIndex({author: "text"});
-
 const Quotes = mongoose.model('Quotes', QuoteSchema);
 
 module.exports = {Quotes}

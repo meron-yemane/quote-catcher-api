@@ -23,7 +23,7 @@ const {quotesRouter} = require('./quotes/router');
 
 app.use(
    cors({
-       origin: [CLIENT_ORIGIN, 'http://localhost:3000', 'http://localhost:8080']
+       origin: [CLIENT_ORIGIN, 'http://localhost:3000', 'http://localhost:8080', 'http://quote-catcher.herokuapp.com']
    })
 );
 // Bottom code allows pre-flight across the board for complex non GET/POST requests

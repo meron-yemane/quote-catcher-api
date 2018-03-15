@@ -1,7 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-
+const {User} = require('../users/models');
 const config = require('../config');
 
 const createAuthToken = user => {
@@ -23,8 +23,20 @@ authRouter.post('/login',
 );
 
 authRouter.get('/logout', function(req, res){
+  console.log("req logout", req)
   localStorage.removeItem('access_token');
   res.json({});
+});
+
+authRouter.put('/logoutdemouser', function(req, res) {
+  User
+    .findOneAndUpdate(
+      { username: 'abc' },
+      { $set: { _quotes: [], themes: [] } }
+    )
+    .then(() => {
+      res.json({});
+    });
 });
 
 authRouter.post('/refresh', 

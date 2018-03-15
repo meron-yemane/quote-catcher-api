@@ -47,5 +47,4 @@ authRouter.post('/refresh',
   }
 );
 
-
 module.exports = {authRouter};

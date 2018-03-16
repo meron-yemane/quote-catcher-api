@@ -27,6 +27,8 @@ quotesRouter.post('/create', passport.authenticate('jwt', {session: false}), (re
         if (err) {
           res.status(400);
         };
+        console.log("user", user)
+        console.log("userQ1", user._quotes)
         user._quotes.push(quote);
         user.save(err => {
           if (err) {
@@ -37,6 +39,8 @@ quotesRouter.post('/create', passport.authenticate('jwt', {session: false}), (re
               return res.status(400);
             }
           })
+          console.log("user2", user)
+          console.log("userQ2", user._quotes)
           res.status(201).json(quote);
         })
       })
@@ -211,7 +215,6 @@ quotesRouter.delete('/deletetheme/:id', passport.authenticate('jwt', {session: f
         if (err) {
           return res.status(500).json({message: 'Internal server error'});
         }
-        console.log(quote);
         return res.status(200).json(quote);
     });
   });

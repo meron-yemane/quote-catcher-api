@@ -23,7 +23,6 @@ authRouter.post('/login',
 );
 
 authRouter.get('/logout', function(req, res){
-  console.log("req logout", req)
   localStorage.removeItem('access_token');
   res.json({});
 });

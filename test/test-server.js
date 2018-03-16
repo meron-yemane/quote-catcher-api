@@ -108,7 +108,6 @@ describe('Quote Catcher API resources', function() {
         .then(function(res) {
           res.should.have.status(200);
           res.body.should.include.key('authToken');
-          //res.body.authToken.should.not.equal(authorizationToken);
         });
     });
 

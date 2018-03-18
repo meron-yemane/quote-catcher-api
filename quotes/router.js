@@ -113,7 +113,7 @@ quotesRouter.put('/demoquotes', passport.authenticate('jwt', {session: false}), 
         if (err) {
           return res.status(500);
         }
-        user.set({ '_quotes': demoQuotes });
+        user._quotes = demoQuotes;
         user.save(function (err, updatedUser) {
           if (err) {
             return res.status(500);

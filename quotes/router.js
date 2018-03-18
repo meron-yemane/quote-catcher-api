@@ -123,11 +123,23 @@ quotesRouter.put('/demoquotes', passport.authenticate('jwt', {session: false}), 
       });
 }); 
 
+quotesRouter.get('/alldemoquotes', passport.authenticate('jwt', {session: false}), (req, res) => { 
+  User     
+  .findOne({username: 'abc'})
+    .populate('_quotes')     
+    .exec((err, user) => {
+      if (err) {
+        return res.status(500).json(err);       
+      }       
+      return res.status(200).json(user._quotes);     
+    }); 
+  });
+
 quotesRouter.get('/all', passport.authenticate('jwt', {session: false}), (req, res) => { 
   User     
   .findOne({username: jwt.verify(req.headers.authorization.split(' ')[1], config.JWT_SECRET).sub})
     .populate('_quotes')     
-    .exec((err, user) => {       
+    .exec((err, user) => {
       if (err) {
         return res.status(500).json(err);       
       }       

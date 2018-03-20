@@ -22,24 +22,33 @@ quotesRouter.post('/create', passport.authenticate('jwt', {session: false}), (re
        return res.status(400);
      }
      User
-      .findOne({username: jwt.verify(req.headers.authorization.split(' ')[1], config.JWT_SECRET).sub}) 
-      .exec((err, user) => {
+      .findOneAndUpdate({username: jwt.verify(req.headers.authorization.split(' ')[1], config.JWT_SECRET).sub}, { $push: {_quotes: quote} }, (err, quote) => {
         if (err) {
-          res.status(400);
-        };
-        user._quotes.push(quote);
-        user.save(err => {
-          if (err) {
-            return res.status(400);
-          }
-          user.populate('Quotes', (err) => {
-            if (err) {
-              return res.status(400);
-            }
-          })
-          res.status(201).json(quote);
-        })
-      })
+          return res.status(500).json(err);
+        } else {
+          return res.status(201).json(quote);
+        }
+      });
+      // .exec((err, quote) => {
+      //   if (err) {
+      //     res.status(400);
+      //   };
+      // })
+      // .then(() => {
+      //   return res.status(201).json(quote);
+      // })
+        // user._quotes.push(quote);
+        // user.save(err => {
+        //   if (err) {
+        //     return res.status(400);
+        //   }
+        //   user.populate('Quotes', (err) => {
+        //     if (err) {
+        //       return res.status(400);
+        //     }
+        //   })
+        //})
+      //})
   });
 });
 

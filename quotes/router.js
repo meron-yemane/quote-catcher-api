@@ -22,7 +22,7 @@ quotesRouter.post('/create', passport.authenticate('jwt', {session: false}), (re
        return res.status(400);
      }
      User
-      .findOneAndUpdate({username: jwt.verify(req.headers.authorization.split(' ')[1], config.JWT_SECRET).sub}, { $push: {_quotes: quote} }, (err, quote) => {
+      .findOneAndUpdate({username: jwt.verify(req.headers.authorization.split(' ')[1], config.JWT_SECRET).sub}, { $push: { _quotes: quote } }, (err) => {
         if (err) {
           return res.status(500).json(err);
         } else {

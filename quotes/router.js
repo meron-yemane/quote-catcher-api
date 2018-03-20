@@ -206,7 +206,7 @@ quotesRouter.post('/searchbyquotestring', passport.authenticate('jwt', {session:
 
 quotesRouter.delete('/deletequote/:id', passport.authenticate('jwt', {session: false}), (req, res) => {
   Quotes 
-    .findByIdAndRemove(req.params.id)
+    .remove( { _id: req.params.id} )
     .exec()
     .then(quote => res.status(204).end())
     .catch(err => res.status(500).json({message: 'Internal server error'}));
